@@ -19,20 +19,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.IO;
-using System.Globalization;
-
 namespace RSAKeyTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Security.Cryptography;
+
     public class RSAKeyUtils
     {
         #region PUBLIC KEY TO X509 BLOB
         internal static byte[] PublicKeyToX509(RSAParameters publicKey)
         {
-
             /* *
             * SEQUENCE                          * +- SEQUENCE                       *    +- OID                         *    +- Null                        * +- BITSTRING                      *    +- SEQUENCE                    *       +- INTEGER(N)               *       +- INTEGER(E)               * */
 
@@ -127,7 +126,6 @@ namespace RSAKeyTests
                 else
                     return null;
 
-
                 CspParameters parms = new CspParameters();
                 parms.Flags = CspProviderFlags.NoFlags;
                 parms.KeyContainerName = Guid.NewGuid().ToString().ToUpperInvariant();
@@ -170,14 +168,12 @@ namespace RSAKeyTests
 
             try
             {
-
                 twobytes = binr.ReadUInt16();
                 if (twobytes == 0x8130) binr.ReadByte();
                 else if (twobytes == 0x8230)
                     binr.ReadInt16();
                 else
                     return null;
-
 
                 bt = binr.ReadByte();
                 if (bt != 0x02)
@@ -203,14 +199,11 @@ if (bt == 0x82)
                 RSACryptoServiceProvider rsacsp = DecodeRSAPrivateKey(rsaprivkey);
                 return rsacsp;
             }
-
             catch (Exception)
             {
                 return null;
             }
-
             finally { binr.Close(); }
-
         }
         #endregion
 
@@ -228,8 +221,10 @@ if (bt == 0x82)
                         return false;
                     i++;
                 }
+
                 return true;
             }
+
             public static byte[] AlignBytes(byte[] inputBytes, int alignSize)
             {
                 int inputBytesSize = inputBytes.Length;
@@ -241,6 +236,7 @@ if (bt == 0x82)
                     {
                         buf[i + (alignSize - inputBytesSize)] = inputBytes[i];
                     }
+
                     return buf;
                 }
                 else
@@ -276,6 +272,7 @@ if (bt == 0x82)
                 {
                     count -= 1;
                 }
+
                 rd.BaseStream.Seek(-1, System.IO.SeekOrigin.Current);
 
                 return count;
@@ -356,7 +353,6 @@ if (bt == 0x82)
             public int size_InvQ = -1;
         }
 
-
         private class AsnMessage
         {
             private byte[] m_octets;
@@ -384,13 +380,13 @@ if (bt == 0x82)
 
                 return m_octets;
             }
+
             internal String GetFormat()
             { return m_format; }
         }
 
         private class AsnType
         {
-
             public AsnType(byte tag, byte octet)
             {
                 m_raw = false;
@@ -422,6 +418,7 @@ if (bt == 0x82)
             }
 
             private byte[] m_tag;
+
             public byte[] Tag
             {
                 get
@@ -433,6 +430,7 @@ if (bt == 0x82)
             }
 
             private byte[] m_length;
+
             public byte[] Length
             {
                 get
@@ -444,6 +442,7 @@ if (bt == 0x82)
             }
 
             private byte[] m_octets;
+
             public byte[] Octets
             {
                 get
@@ -452,6 +451,7 @@ if (bt == 0x82)
                     { return EMPTY; }
                     return m_octets;
                 }
+
                 set
                 { m_octets = value; }
             }
@@ -506,8 +506,6 @@ if (bt == 0x82)
                     length[0] = 0x81;
                     length[1] = (byte)((m_octets.Length & 0xFF));
                 }
-
-
                 else if (m_octets.Length <= 0xFFFF)
                 {
                     length = new byte[3];
@@ -515,7 +513,6 @@ if (bt == 0x82)
                     length[1] = (byte)((m_octets.Length & 0xFF00) >> 8);
                     length[2] = (byte)((m_octets.Length & 0xFF));
                 }
-
                 else if (m_octets.Length <= 0xFFFFFF)
                 {
                     length = new byte[4];
@@ -562,7 +559,7 @@ if (bt == 0x82)
 
                 return cated;
             }
-        };
+        }
 
         #endregion
 
@@ -590,7 +587,6 @@ if (bt == 0x82)
                 bt = binr.ReadByte();
                 if (bt != 0x00)
                     return null;
-
 
                 elems = GetIntegerSize(binr);
                 MODULUS = binr.ReadBytes(elems);
@@ -660,15 +656,13 @@ if (bt == 0x82)
                 count = bt;
             }
 
-
-
             while (binr.ReadByte() == 0x00)
             {
                 count -= 1;
             }
+
             binr.BaseStream.Seek(-1, SeekOrigin.Current); return count;
         }
-
 
         private static bool CompareBytearrays(byte[] a, byte[] b)
         {
@@ -681,10 +675,9 @@ if (bt == 0x82)
                     return false;
                 i++;
             }
+
             return true;
         }
-
-
 
         private static AsnType CreateOctetString(byte[] value)
         {
@@ -797,7 +790,6 @@ if (bt == 0x82)
 
                 try
                 { b = Convert.ToByte(s, 2); }
-
                 catch (FormatException /*e*/) { unusedBits = 0; break; }
                 catch (OverflowException /*e*/) { unusedBits = 0; break; }
 
@@ -821,6 +813,7 @@ if (bt == 0x82)
                 if (0 != octets[i])
                 { allZeros = false; break; }
             }
+
             return allZeros;
         }
 
@@ -979,7 +972,6 @@ if (bt == 0x82)
 
         private static AsnType CreateSequence(AsnType[] values)
         {
-
             if (IsEmpty(values))
             { throw new ArgumentException("A sequence requires at least one value."); }
 
