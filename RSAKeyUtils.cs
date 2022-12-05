@@ -37,16 +37,15 @@ namespace RSAKeyTests
 
             AsnType oid = CreateOid("1.2.840.113549.1.1.1");
             AsnType algorithmID =
-              CreateSequence(new AsnType[] { oid, CreateNull() });
+                CreateSequence(new AsnType[] { oid, CreateNull() });
 
             AsnType n = CreateIntegerPos(publicKey.Modulus);
             AsnType e = CreateIntegerPos(publicKey.Exponent);
             AsnType key = CreateBitString(
-              CreateSequence(new AsnType[] { n, e })
-            );
+                CreateSequence(new AsnType[] { n, e }));
 
             AsnType publicKeyInfo =
-              CreateSequence(new AsnType[] { algorithmID, key });
+                CreateSequence(new AsnType[] { algorithmID, key });
 
             return new AsnMessage(publicKeyInfo.GetBytes(), "X.509").GetBytes();
         }
@@ -68,14 +67,12 @@ namespace RSAKeyTests
             AsnType version = CreateInteger(new byte[] { 0 });
 
             AsnType key = CreateOctetString(
-  CreateSequence(new AsnType[] { version, n, e, d, p, q, dp, dq, iq })
-);
+                CreateSequence(new AsnType[] { version, n, e, d, p, q, dp, dq, iq }));
 
-            AsnType algorithmID = CreateSequence(new AsnType[] { CreateOid("1.2.840.113549.1.1.1"), CreateNull() }
-);
+            AsnType algorithmID = CreateSequence(new AsnType[] { CreateOid("1.2.840.113549.1.1.1"), CreateNull() });
 
             AsnType privateKeyInfo =
-  CreateSequence(new AsnType[] { version, algorithmID, key });
+                CreateSequence(new AsnType[] { version, algorithmID, key });
 
             return new AsnMessage(privateKeyInfo.GetBytes(), "PKCS#8").GetBytes();
         }
@@ -106,25 +103,46 @@ namespace RSAKeyTests
                         return null;
                 }
 
-                seq = rd.ReadBytes(15); if (!Helpers.CompareBytearrays(seq, SeqOID)) return null;
+                seq = rd.ReadBytes(15);
+
+                if (!Helpers.CompareBytearrays(seq, SeqOID))
+                {
+                    return null;
+                }
 
                 shortValue = rd.ReadUInt16();
-                if (shortValue == 0x8103) rd.ReadByte();
+                if (shortValue == 0x8103)
+                {
+                    rd.ReadByte();
+                }
                 else if (shortValue == 0x8203)
+                {
                     rd.ReadInt16();
+                }
                 else
+                {
                     return null;
+                }
 
                 byteValue = rd.ReadByte();
                 if (byteValue != 0x00)
+                {
                     return null;
+                }
 
                 shortValue = rd.ReadUInt16();
-                if (shortValue == 0x8130) rd.ReadByte();
+                if (shortValue == 0x8130)
+                {
+                    rd.ReadByte();
+                }
                 else if (shortValue == 0x8230)
+                {
                     rd.ReadInt16();
+                }
                 else
+                {
                     return null;
+                }
 
                 CspParameters parms = new CspParameters();
                 parms.Flags = CspProviderFlags.NoFlags;
@@ -163,37 +181,61 @@ namespace RSAKeyTests
             byte[] seq = new byte[15];
             MemoryStream mem = new MemoryStream(pkcs8);
             int lenstream = (int)mem.Length;
-            BinaryReader binr = new BinaryReader(mem); byte bt = 0;
+            BinaryReader binr = new BinaryReader(mem);
+            byte bt = 0;
             ushort twobytes = 0;
 
             try
             {
                 twobytes = binr.ReadUInt16();
-                if (twobytes == 0x8130) binr.ReadByte();
+                if (twobytes == 0x8130)
+                {
+                    binr.ReadByte();
+                }
                 else if (twobytes == 0x8230)
+                {
                     binr.ReadInt16();
+                }
                 else
+                {
                     return null;
+                }
 
                 bt = binr.ReadByte();
                 if (bt != 0x02)
+                {
                     return null;
+                }
 
                 twobytes = binr.ReadUInt16();
 
                 if (twobytes != 0x0001)
+                {
                     return null;
+                }
 
-                seq = binr.ReadBytes(15); if (!CompareBytearrays(seq, SeqOID)) return null;
+                seq = binr.ReadBytes(15);
+
+                if (!CompareBytearrays(seq, SeqOID))
+                {
+                    return null;
+                }
 
                 bt = binr.ReadByte();
-                if (bt != 0x04) return null;
+                if (bt != 0x04)
+                {
+                    return null;
+                }
 
-                bt = binr.ReadByte(); if (bt == 0x81)
+                bt = binr.ReadByte();
+                if (bt == 0x81)
+                {
                     binr.ReadByte();
-                else
-if (bt == 0x82)
+                }
+                else if (bt == 0x82)
+                {
                     binr.ReadUInt16();
+                }
 
                 byte[] rsaprivkey = binr.ReadBytes((int)(lenstream - mem.Position));
                 RSACryptoServiceProvider rsacsp = DecodeRSAPrivateKey(rsaprivkey);
@@ -203,7 +245,10 @@ if (bt == 0x82)
             {
                 return null;
             }
-            finally { binr.Close(); }
+            finally
+            {
+                binr.Close();
+            }
         }
         #endregion
 
@@ -213,12 +258,18 @@ if (bt == 0x82)
             public static bool CompareBytearrays(byte[] a, byte[] b)
             {
                 if (a.Length != b.Length)
+                {
                     return false;
+                }
+
                 int i = 0;
                 foreach (byte c in a)
                 {
                     if (c != b[i])
+                    {
                         return false;
+                    }
+
                     i++;
                 }
 
@@ -251,7 +302,10 @@ if (bt == 0x82)
                 int count;
 
                 byteValue = rd.ReadByte();
-                if (byteValue != 0x02) return 0;
+                if (byteValue != 0x02)
+                {
+                    return 0;
+                }
 
                 byteValue = rd.ReadByte();
                 if (byteValue == 0x81)
@@ -260,7 +314,8 @@ if (bt == 0x82)
                 }
                 else if (byteValue == 0x82)
                 {
-                    byte hi = rd.ReadByte(); byte lo = rd.ReadByte();
+                    byte hi = rd.ReadByte();
+                    byte lo = rd.ReadByte();
                     count = BitConverter.ToUInt16(new[] { lo, hi }, 0);
                 }
                 else
@@ -362,7 +417,11 @@ if (bt == 0x82)
             {
                 get
                 {
-                    if (null == m_octets) { return 0; }
+                    if (null == m_octets)
+                    {
+                        return 0;
+                    }
+
                     return m_octets.Length;
                 }
             }
@@ -376,13 +435,17 @@ if (bt == 0x82)
             internal byte[] GetBytes()
             {
                 if (null == m_octets)
-                { return new byte[] { }; }
+                {
+                    return new byte[] { };
+                }
 
                 return m_octets;
             }
 
             internal String GetFormat()
-            { return m_format; }
+            {
+                return m_format;
+            }
         }
 
         private class AsnType
@@ -424,7 +487,10 @@ if (bt == 0x82)
                 get
                 {
                     if (null == m_tag)
+                    {
                         return EMPTY;
+                    }
+
                     return m_tag;
                 }
             }
@@ -436,7 +502,10 @@ if (bt == 0x82)
                 get
                 {
                     if (null == m_length)
+                    {
                         return EMPTY;
+                    }
+
                     return m_length;
                 }
             }
@@ -448,12 +517,17 @@ if (bt == 0x82)
                 get
                 {
                     if (null == m_octets)
-                    { return EMPTY; }
+                    {
+                        return EMPTY;
+                    }
+
                     return m_octets;
                 }
 
                 set
-                { m_octets = value; }
+                {
+                    m_octets = value;
+                }
             }
 
             internal byte[] GetBytes()
@@ -461,8 +535,7 @@ if (bt == 0x82)
                 if (true == m_raw)
                 {
                     return Concatenate(
-                      new byte[][] { m_tag, m_length, m_octets }
-                    );
+                        new byte[][] { m_tag, m_length, m_octets });
                 }
 
                 SetLength();
@@ -470,13 +543,11 @@ if (bt == 0x82)
                 if (0x05 == m_tag[0])
                 {
                     return Concatenate(
-                      new byte[][] { m_tag, m_octets }
-                    );
+                        new byte[][] { m_tag, m_octets });
                 }
 
                 return Concatenate(
-                  new byte[][] { m_tag, m_length, m_octets }
-                );
+                    new byte[][] { m_tag, m_length, m_octets });
             }
 
             private void SetLength()
@@ -537,12 +608,17 @@ if (bt == 0x82)
             private byte[] Concatenate(byte[][] values)
             {
                 if (IsEmpty(values))
+                {
                     return new byte[] { };
+                }
 
                 int length = 0;
                 foreach (byte[] b in values)
                 {
-                    if (null != b) length += b.Length;
+                    if (null != b)
+                    {
+                        length += b.Length;
+                    }
                 }
 
                 byte[] cated = new byte[length];
@@ -570,23 +646,37 @@ if (bt == 0x82)
             byte[] MODULUS, E, D, P, Q, DP, DQ, IQ;
 
             MemoryStream mem = new MemoryStream(privkey);
-            BinaryReader binr = new BinaryReader(mem); byte bt = 0;
+            BinaryReader binr = new BinaryReader(mem);
+            byte bt = 0;
             ushort twobytes = 0;
             int elems = 0;
             try
             {
                 twobytes = binr.ReadUInt16();
-                if (twobytes == 0x8130) binr.ReadByte();
+                if (twobytes == 0x8130)
+                {
+                    binr.ReadByte();
+                }
                 else if (twobytes == 0x8230)
+                {
                     binr.ReadInt16();
+                }
                 else
+                {
                     return null;
+                }
 
                 twobytes = binr.ReadUInt16();
-                if (twobytes != 0x0102) return null;
+                if (twobytes != 0x0102)
+                {
+                    return null;
+                }
+
                 bt = binr.ReadByte();
                 if (bt != 0x00)
+                {
                     return null;
+                }
 
                 elems = GetIntegerSize(binr);
                 MODULUS = binr.ReadBytes(elems);
@@ -629,7 +719,10 @@ if (bt == 0x82)
             {
                 return null;
             }
-            finally { binr.Close(); }
+            finally
+            {
+                binr.Close();
+            }
         }
 
         private static int GetIntegerSize(BinaryReader binr)
@@ -639,15 +732,21 @@ if (bt == 0x82)
             byte highbyte = 0x00;
             int count = 0;
             bt = binr.ReadByte();
-            if (bt != 0x02) return 0;
+            if (bt != 0x02)
+            {
+                return 0;
+            }
+
             bt = binr.ReadByte();
 
             if (bt == 0x81)
-                count = binr.ReadByte();
-            else
-            if (bt == 0x82)
             {
-                highbyte = binr.ReadByte(); lowbyte = binr.ReadByte();
+                count = binr.ReadByte();
+            }
+            else if (bt == 0x82)
+            {
+                highbyte = binr.ReadByte();
+                lowbyte = binr.ReadByte();
                 byte[] modint = { lowbyte, highbyte, 0x00, 0x00 };
                 count = BitConverter.ToInt32(modint, 0);
             }
@@ -661,18 +760,25 @@ if (bt == 0x82)
                 count -= 1;
             }
 
-            binr.BaseStream.Seek(-1, SeekOrigin.Current); return count;
+            binr.BaseStream.Seek(-1, SeekOrigin.Current);
+            return count;
         }
 
         private static bool CompareBytearrays(byte[] a, byte[] b)
         {
             if (a.Length != b.Length)
+            {
                 return false;
+            }
+
             int i = 0;
             foreach (byte c in a)
             {
                 if (c != b[i])
+                {
                     return false;
+                }
+
                 i++;
             }
 
@@ -712,7 +818,9 @@ if (bt == 0x82)
         private static AsnType CreateOctetString(String value)
         {
             if (IsEmpty(value))
-            { return CreateOctetString(EMPTY); }
+            {
+                return CreateOctetString(EMPTY);
+            }
 
             int len = (value.Length + 255) / 256;
 
@@ -723,9 +831,17 @@ if (bt == 0x82)
                 byte b = 0x00;
 
                 try
-                { b = Convert.ToByte(s, 16); }
-                catch (FormatException /*e*/) { break; }
-                catch (OverflowException /*e*/) { break; }
+                {
+                    b = Convert.ToByte(s, 16);
+                }
+                catch (FormatException /*e*/)
+                {
+                    break;
+                }
+                catch (OverflowException /*e*/)
+                {
+                    break;
+                }
 
                 octets.Add(b);
             }
@@ -746,7 +862,9 @@ if (bt == 0x82)
             }
 
             if (!(unusedBits < 8))
-            { throw new ArgumentException("Unused bits must be less than 8."); }
+            {
+                throw new ArgumentException("Unused bits must be less than 8.");
+            }
 
             byte[] b = Concatenate(new byte[] { (byte)unusedBits }, octets);
             return new AsnType(0x03, b);
@@ -755,7 +873,9 @@ if (bt == 0x82)
         private static AsnType CreateBitString(AsnType value)
         {
             if (IsEmpty(value))
-            { return new AsnType(0x03, EMPTY); }
+            {
+                return new AsnType(0x03, EMPTY);
+            }
 
             return CreateBitString(value.GetBytes(), 0x00);
         }
@@ -763,7 +883,9 @@ if (bt == 0x82)
         private static AsnType CreateBitString(AsnType[] values)
         {
             if (IsEmpty(values))
-            { return new AsnType(0x03, EMPTY); }
+            {
+                return new AsnType(0x03, EMPTY);
+            }
 
             return CreateBitString(Concatenate(values), 0x00);
         }
@@ -771,14 +893,21 @@ if (bt == 0x82)
         private static AsnType CreateBitString(String value)
         {
             if (IsEmpty(value))
-            { return CreateBitString(EMPTY); }
+            {
+                return CreateBitString(EMPTY);
+            }
 
             int lstrlen = value.Length;
             int unusedBits = 8 - (lstrlen % 8);
-            if (8 == unusedBits) { unusedBits = 0; }
+            if (8 == unusedBits)
+            {
+                unusedBits = 0;
+            }
 
             for (int i = 0; i < unusedBits; i++)
-            { value += "0"; }
+            {
+                value += "0";
+            }
 
             int loctlen = (lstrlen + 7) / 8;
 
@@ -789,9 +918,19 @@ if (bt == 0x82)
                 byte b = 0x00;
 
                 try
-                { b = Convert.ToByte(s, 2); }
-                catch (FormatException /*e*/) { unusedBits = 0; break; }
-                catch (OverflowException /*e*/) { unusedBits = 0; break; }
+                {
+                    b = Convert.ToByte(s, 2);
+                }
+                catch (FormatException /*e*/)
+                {
+                    unusedBits = 0;
+                    break;
+                }
+                catch (OverflowException /*e*/)
+                {
+                    unusedBits = 0;
+                    break;
+                }
 
                 octets.Add(b);
             }
@@ -805,13 +944,18 @@ if (bt == 0x82)
         private static bool IsZero(byte[] octets)
         {
             if (IsEmpty(octets))
-            { return false; }
+            {
+                return false;
+            }
 
             bool allZeros = true;
             for (int i = 0; i < octets.Length; i++)
             {
                 if (0 != octets[i])
-                { allZeros = false; break; }
+                {
+                    allZeros = false;
+                    break;
+                }
             }
 
             return allZeros;
@@ -820,7 +964,9 @@ if (bt == 0x82)
         private static bool IsEmpty(byte[] octets)
         {
             if (null == octets || 0 == octets.Length)
-            { return true; }
+            {
+                return true;
+            }
 
             return false;
         }
@@ -828,7 +974,9 @@ if (bt == 0x82)
         private static bool IsEmpty(String s)
         {
             if (null == s || 0 == s.Length)
-            { return true; }
+            {
+                return true;
+            }
 
             return false;
         }
@@ -836,7 +984,9 @@ if (bt == 0x82)
         private static bool IsEmpty(String[] strings)
         {
             if (null == strings || 0 == strings.Length)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -844,7 +994,9 @@ if (bt == 0x82)
         private static bool IsEmpty(AsnType value)
         {
             if (null == value)
-            { return true; }
+            {
+                return true;
+            }
 
             return false;
         }
@@ -852,7 +1004,9 @@ if (bt == 0x82)
         private static bool IsEmpty(AsnType[] values)
         {
             if (null == values || 0 == values.Length)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -860,7 +1014,9 @@ if (bt == 0x82)
         private static bool IsEmpty(byte[][] arrays)
         {
             if (null == arrays || 0 == arrays.Length)
+            {
                 return true;
+            }
 
             return false;
         }
@@ -868,7 +1024,9 @@ if (bt == 0x82)
         private static AsnType CreateInteger(byte[] value)
         {
             if (IsEmpty(value))
-            { return CreateInteger(ZERO); }
+            {
+                return CreateInteger(ZERO);
+            }
 
             return new AsnType(0x02, value);
         }
@@ -881,7 +1039,9 @@ if (bt == 0x82)
         private static byte[] Duplicate(byte[] b)
         {
             if (IsEmpty(b))
-            { return EMPTY; }
+            {
+                return EMPTY;
+            }
 
             byte[] d = new byte[b.Length];
             Array.Copy(b, d, b.Length);
@@ -893,7 +1053,10 @@ if (bt == 0x82)
         {
             byte[] i = null, d = Duplicate(value);
 
-            if (IsEmpty(d)) { d = ZERO; }
+            if (IsEmpty(d))
+            {
+                d = ZERO;
+            }
 
             if (d.Length > 0 && d[0] > 0x7F)
             {
@@ -912,13 +1075,17 @@ if (bt == 0x82)
         private static byte[] Concatenate(AsnType[] values)
         {
             if (IsEmpty(values))
+            {
                 return new byte[] { };
+            }
 
             int length = 0;
             foreach (AsnType t in values)
             {
                 if (null != t)
-                { length += t.GetBytes().Length; }
+                {
+                    length += t.GetBytes().Length;
+                }
             }
 
             byte[] cated = new byte[length];
@@ -946,13 +1113,17 @@ if (bt == 0x82)
         private static byte[] Concatenate(byte[][] values)
         {
             if (IsEmpty(values))
+            {
                 return new byte[] { };
+            }
 
             int length = 0;
             foreach (byte[] b in values)
             {
                 if (null != b)
-                { length += b.Length; }
+                {
+                    length += b.Length;
+                }
             }
 
             byte[] cated = new byte[length];
@@ -973,7 +1144,9 @@ if (bt == 0x82)
         private static AsnType CreateSequence(AsnType[] values)
         {
             if (IsEmpty(values))
-            { throw new ArgumentException("A sequence requires at least one value."); }
+            {
+                throw new ArgumentException("A sequence requires at least one value.");
+            }
 
             return new AsnType((0x10 | 0x20), Concatenate(values));
         }
@@ -981,12 +1154,16 @@ if (bt == 0x82)
         private static AsnType CreateOid(String value)
         {
             if (IsEmpty(value))
+            {
                 return null;
+            }
 
             String[] tokens = value.Split(new Char[] { ' ', '.' });
 
             if (IsEmpty(tokens))
+            {
                 return null;
+            }
 
             UInt64 a = 0;
 
@@ -994,22 +1171,44 @@ if (bt == 0x82)
 
             foreach (String t in tokens)
             {
-                if (t.Length == 0) { break; }
+                if (t.Length == 0)
+                {
+                    break;
+                }
 
-                try { a = Convert.ToUInt64(t, CultureInfo.InvariantCulture); }
-                catch (FormatException /*e*/) { break; }
-                catch (OverflowException /*e*/) { break; }
+                try
+                {
+                    a = Convert.ToUInt64(t, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException /*e*/)
+                {
+                    break;
+                }
+                catch (OverflowException /*e*/)
+                {
+                    break;
+                }
 
                 arcs.Add(a);
             }
 
             if (0 == arcs.Count)
+            {
                 return null;
+            }
 
             List<byte> octets = new List<byte>();
 
-            if (arcs.Count >= 1) { a = arcs[0] * 40; }
-            if (arcs.Count >= 2) { a += arcs[1]; }
+            if (arcs.Count >= 1)
+            {
+                a = arcs[0] * 40;
+            }
+
+            if (arcs.Count >= 2)
+            {
+                a += arcs[1];
+            }
+
             octets.Add((byte)(a));
 
             for (int i = 2; i < arcs.Count; i++)
@@ -1022,7 +1221,8 @@ if (bt == 0x82)
                 {
                     temp.Add((byte)(0x80 | (arc & 0x7F)));
                     arc >>= 7;
-                } while (0 != arc);
+                }
+                while (0 != arc);
 
                 byte[] t = temp.ToArray();
 
@@ -1031,7 +1231,9 @@ if (bt == 0x82)
                 Array.Reverse(t);
 
                 foreach (byte b in t)
-                { octets.Add(b); }
+                {
+                    octets.Add(b);
+                }
             }
 
             return CreateOid(octets.ToArray());
@@ -1040,7 +1242,9 @@ if (bt == 0x82)
         private static AsnType CreateOid(byte[] value)
         {
             if (IsEmpty(value))
-            { return null; }
+            {
+                return null;
+            }
 
             return new AsnType(0x06, value);
         }
@@ -1048,7 +1252,9 @@ if (bt == 0x82)
         private static byte[] Compliment1s(byte[] value)
         {
             if (IsEmpty(value))
-            { return EMPTY; }
+            {
+                return EMPTY;
+            }
 
             byte[] c = Duplicate(value);
 
