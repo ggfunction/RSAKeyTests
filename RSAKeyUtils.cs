@@ -417,7 +417,7 @@ namespace RSAKeyTests
             {
                 get
                 {
-                    if (null == m_octets)
+                    if (m_octets == null)
                     {
                         return 0;
                     }
@@ -434,7 +434,7 @@ namespace RSAKeyTests
 
             internal byte[] GetBytes()
             {
-                if (null == m_octets)
+                if (m_octets == null)
                 {
                     return new byte[] { };
                 }
@@ -486,7 +486,7 @@ namespace RSAKeyTests
             {
                 get
                 {
-                    if (null == m_tag)
+                    if (m_tag == null)
                     {
                         return EMPTY;
                     }
@@ -501,7 +501,7 @@ namespace RSAKeyTests
             {
                 get
                 {
-                    if (null == m_length)
+                    if (m_length == null)
                     {
                         return EMPTY;
                     }
@@ -516,7 +516,7 @@ namespace RSAKeyTests
             {
                 get
                 {
-                    if (null == m_octets)
+                    if (m_octets == null)
                     {
                         return EMPTY;
                     }
@@ -532,7 +532,7 @@ namespace RSAKeyTests
 
             internal byte[] GetBytes()
             {
-                if (true == m_raw)
+                if (m_raw == true)
                 {
                     return Concatenate(
                         new byte[][] { m_tag, m_length, m_octets });
@@ -540,7 +540,7 @@ namespace RSAKeyTests
 
                 SetLength();
 
-                if (0x05 == m_tag[0])
+                if (m_tag[0] == 0x05)
                 {
                     return Concatenate(
                         new byte[][] { m_tag, m_octets });
@@ -552,13 +552,13 @@ namespace RSAKeyTests
 
             private void SetLength()
             {
-                if (null == m_octets)
+                if (m_octets == null)
                 {
                     m_length = ZERO;
                     return;
                 }
 
-                if (0x05 == m_tag[0])
+                if (m_tag[0] == 0x05)
                 {
                     m_length = EMPTY;
                     return;
@@ -615,7 +615,7 @@ namespace RSAKeyTests
                 int length = 0;
                 foreach (byte[] b in values)
                 {
-                    if (null != b)
+                    if (b != null)
                     {
                         length += b.Length;
                     }
@@ -626,7 +626,7 @@ namespace RSAKeyTests
                 int current = 0;
                 foreach (byte[] b in values)
                 {
-                    if (null != b)
+                    if (b != null)
                     {
                         Array.Copy(b, 0, cated, current, b.Length);
                         current += b.Length;
@@ -899,7 +899,7 @@ namespace RSAKeyTests
 
             int lstrlen = value.Length;
             int unusedBits = 8 - (lstrlen % 8);
-            if (8 == unusedBits)
+            if (unusedBits == 8)
             {
                 unusedBits = 0;
             }
@@ -951,7 +951,7 @@ namespace RSAKeyTests
             bool allZeros = true;
             for (int i = 0; i < octets.Length; i++)
             {
-                if (0 != octets[i])
+                if (octets[i] != 0)
                 {
                     allZeros = false;
                     break;
@@ -963,7 +963,7 @@ namespace RSAKeyTests
 
         private static bool IsEmpty(byte[] octets)
         {
-            if (null == octets || 0 == octets.Length)
+            if (octets == null || octets.Length == 0)
             {
                 return true;
             }
@@ -973,7 +973,7 @@ namespace RSAKeyTests
 
         private static bool IsEmpty(String s)
         {
-            if (null == s || 0 == s.Length)
+            if (s == null || s.Length == 0)
             {
                 return true;
             }
@@ -983,7 +983,7 @@ namespace RSAKeyTests
 
         private static bool IsEmpty(String[] strings)
         {
-            if (null == strings || 0 == strings.Length)
+            if (strings == null || strings.Length == 0)
             {
                 return true;
             }
@@ -993,7 +993,7 @@ namespace RSAKeyTests
 
         private static bool IsEmpty(AsnType value)
         {
-            if (null == value)
+            if (value == null)
             {
                 return true;
             }
@@ -1003,7 +1003,7 @@ namespace RSAKeyTests
 
         private static bool IsEmpty(AsnType[] values)
         {
-            if (null == values || 0 == values.Length)
+            if (values == null || values.Length == 0)
             {
                 return true;
             }
@@ -1013,7 +1013,7 @@ namespace RSAKeyTests
 
         private static bool IsEmpty(byte[][] arrays)
         {
-            if (null == arrays || 0 == arrays.Length)
+            if (arrays == null || arrays.Length == 0)
             {
                 return true;
             }
@@ -1082,7 +1082,7 @@ namespace RSAKeyTests
             int length = 0;
             foreach (AsnType t in values)
             {
-                if (null != t)
+                if (t != null)
                 {
                     length += t.GetBytes().Length;
                 }
@@ -1093,7 +1093,7 @@ namespace RSAKeyTests
             int current = 0;
             foreach (AsnType t in values)
             {
-                if (null != t)
+                if (t != null)
                 {
                     byte[] b = t.GetBytes();
 
@@ -1120,7 +1120,7 @@ namespace RSAKeyTests
             int length = 0;
             foreach (byte[] b in values)
             {
-                if (null != b)
+                if (b != null)
                 {
                     length += b.Length;
                 }
@@ -1131,7 +1131,7 @@ namespace RSAKeyTests
             int current = 0;
             foreach (byte[] b in values)
             {
-                if (null != b)
+                if (b != null)
                 {
                     Array.Copy(b, 0, cated, current, b.Length);
                     current += b.Length;
@@ -1192,7 +1192,7 @@ namespace RSAKeyTests
                 arcs.Add(a);
             }
 
-            if (0 == arcs.Count)
+            if (arcs.Count == 0)
             {
                 return null;
             }
@@ -1222,7 +1222,7 @@ namespace RSAKeyTests
                     temp.Add((byte)(0x80 | (arc & 0x7F)));
                     arc >>= 7;
                 }
-                while (0 != arc);
+                while (arc != 0);
 
                 byte[] t = temp.ToArray();
 
