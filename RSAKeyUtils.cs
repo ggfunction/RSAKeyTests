@@ -411,7 +411,7 @@ namespace RSAKeyTests
         private class AsnMessage
         {
             private byte[] m_octets;
-            private String m_format;
+            private string m_format;
 
             internal int Length
             {
@@ -426,7 +426,7 @@ namespace RSAKeyTests
                 }
             }
 
-            internal AsnMessage(byte[] octets, String format)
+            internal AsnMessage(byte[] octets, string format)
             {
                 m_octets = octets;
                 m_format = format;
@@ -442,7 +442,7 @@ namespace RSAKeyTests
                 return m_octets;
             }
 
-            internal String GetFormat()
+            internal string GetFormat()
             {
                 return m_format;
             }
@@ -815,7 +815,7 @@ namespace RSAKeyTests
             return new AsnType(0x04, Concatenate(values));
         }
 
-        private static AsnType CreateOctetString(String value)
+        private static AsnType CreateOctetString(string value)
         {
             if (IsEmpty(value))
             {
@@ -827,7 +827,7 @@ namespace RSAKeyTests
             List<byte> octets = new List<byte>();
             for (int i = 0; i < len; i++)
             {
-                String s = value.Substring(i * 2, 2);
+                string s = value.Substring(i * 2, 2);
                 byte b = 0x00;
 
                 try
@@ -890,7 +890,7 @@ namespace RSAKeyTests
             return CreateBitString(Concatenate(values), 0x00);
         }
 
-        private static AsnType CreateBitString(String value)
+        private static AsnType CreateBitString(string value)
         {
             if (IsEmpty(value))
             {
@@ -914,7 +914,7 @@ namespace RSAKeyTests
             List<byte> octets = new List<byte>();
             for (int i = 0; i < loctlen; i++)
             {
-                String s = value.Substring(i * 8, 8);
+                string s = value.Substring(i * 8, 8);
                 byte b = 0x00;
 
                 try
@@ -971,7 +971,7 @@ namespace RSAKeyTests
             return false;
         }
 
-        private static bool IsEmpty(String s)
+        private static bool IsEmpty(string s)
         {
             if (s == null || s.Length == 0)
             {
@@ -981,7 +981,7 @@ namespace RSAKeyTests
             return false;
         }
 
-        private static bool IsEmpty(String[] strings)
+        private static bool IsEmpty(string[] strings)
         {
             if (strings == null || strings.Length == 0)
             {
@@ -1151,25 +1151,25 @@ namespace RSAKeyTests
             return new AsnType((0x10 | 0x20), Concatenate(values));
         }
 
-        private static AsnType CreateOid(String value)
+        private static AsnType CreateOid(string value)
         {
             if (IsEmpty(value))
             {
                 return null;
             }
 
-            String[] tokens = value.Split(new Char[] { ' ', '.' });
+            string[] tokens = value.Split(new char[] { ' ', '.' });
 
             if (IsEmpty(tokens))
             {
                 return null;
             }
 
-            UInt64 a = 0;
+            ulong a = 0;
 
-            List<UInt64> arcs = new List<UInt64>();
+            List<ulong> arcs = new List<ulong>();
 
-            foreach (String t in tokens)
+            foreach (string t in tokens)
             {
                 if (t.Length == 0)
                 {
@@ -1215,7 +1215,7 @@ namespace RSAKeyTests
             {
                 List<byte> temp = new List<byte>();
 
-                UInt64 arc = arcs[i];
+                ulong arc = arcs[i];
 
                 do
                 {
